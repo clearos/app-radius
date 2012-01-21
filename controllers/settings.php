@@ -60,8 +60,8 @@ class Settings extends ClearOS_Controller
 
         $this->load->module('accounts/status');
 
-        if ($this->status->unhappy('openldap')) {
-            $this->status->widget('radius', 'openldap');
+        if ($this->status->unhappy('openldap_directory')) {
+            $this->status->widget('radius', 'openldap_directory');
             return;
         }
 
