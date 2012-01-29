@@ -339,8 +339,7 @@ class FreeRADIUS extends Daemon
     {
         clearos_profile(__METHOD__, __LINE__);
 
-        // FIXME
-        //    return lang('base_password_is_invalid');
+        // TODO
     }
 
     ///////////////////////////////////////////////////////////////////////////////
