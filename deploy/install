@@ -47,8 +47,6 @@ fi
 # Create default certificates (from bootstrap in /etc/raddb/certs/)
 #------------------------------------------------------------------
 
-# FIXME: this should be part of radius start?  Key generation gets stuck in installer mode (not enough entropy)
-
 SSL_CONF="/etc/raddb/certs/ca.cnf"
 SSL_PATH="/etc/raddb/clearos-certs"
 
