@@ -1,7 +1,7 @@
 
 Name: app-radius
 Epoch: 1
-Version: 1.0.10
+Version: 1.1.0
 Release: 1%{dist}
 Summary: RADIUS Server
 License: GPLv3
@@ -19,7 +19,7 @@ Requires: app-network
 RADIUS provides additional authentication mechanisms for the system.
 
 %package core
-Summary: RADIUS Server - APIs and install
+Summary: RADIUS Server - Core
 License: LGPLv3
 Group: ClearOS/Libraries
 Requires: app-base-core
