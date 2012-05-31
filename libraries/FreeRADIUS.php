@@ -164,7 +164,7 @@ class FreeRADIUS extends Daemon
             $this->_load_config();
 
         if (! isset($this->clients[$ip]))
-            throw new Engine_Exception(FREERADIUS_LANG_CLIENT . ' - ' . LOCALE_LANG_INVALID, COMMON_WARNING);
+            return;
 
         unset($this->clients[$ip]);
 
