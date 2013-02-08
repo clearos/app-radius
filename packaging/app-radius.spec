@@ -1,7 +1,7 @@
 
 Name: app-radius
 Epoch: 1
-Version: 1.2.3
+Version: 1.2.4
 Release: 1%{dist}
 Summary: RADIUS Server
 License: GPLv3
@@ -44,6 +44,8 @@ mkdir -p -m 755 %{buildroot}/usr/clearos/apps/radius
 cp -r * %{buildroot}/usr/clearos/apps/radius/
 
 install -d -m 0755 %{buildroot}/etc/raddb/clearos-certs
+install -d -m 0755 %{buildroot}/var/clearos/radius
+install -d -m 0755 %{buildroot}/var/clearos/radius/backup
 install -D -m 0640 packaging/clearos-clients.conf %{buildroot}/etc/raddb/clearos-clients.conf
 install -D -m 0640 packaging/clearos-eap.conf %{buildroot}/etc/raddb/clearos-eap.conf
 install -D -m 0640 packaging/clearos-inner-tunnel %{buildroot}/etc/raddb/sites-available/clearos-inner-tunnel
@@ -90,6 +92,8 @@ exit 0
 %exclude /usr/clearos/apps/radius/tests
 %dir /usr/clearos/apps/radius
 %dir /etc/raddb/clearos-certs
+%dir /var/clearos/radius
+%dir /var/clearos/radius/backup
 /usr/clearos/apps/radius/deploy
 /usr/clearos/apps/radius/language
 /usr/clearos/apps/radius/libraries

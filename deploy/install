@@ -18,21 +18,21 @@ fi
 CHECK=`grep "^[[:space:]]*.INCLUDE[[:space:]]*eap.conf" /etc/raddb/radiusd.conf 2>/dev/null`
 if [ -n "$CHECK" ]; then
 	logger -p local6.notice -t installer "app-radius-core - adding clearos-eap.conf configlet"
-	cp -a /etc/raddb/radiusd.conf /usr/clearos/apps/radius/deploy/radius.conf.$TIMESTAMP
+	cp -a /etc/raddb/radiusd.conf /var/clearos/radius/backup/radius.conf.$TIMESTAMP
 	sed -i -e 's/^[[:space:]]*\$INCLUDE[[:space:]]*eap.conf/\t\$INCLUDE clearos-eap.conf/' /etc/raddb/radiusd.conf
 fi
 
 CHECK=`grep "^[[:space:]]*.INCLUDE[[:space:]]*clients.conf" /etc/raddb/radiusd.conf 2>/dev/null`
 if [ -n "$CHECK" ]; then
 	logger -p local6.notice -t installer "app-radius-core - adding clearos-clients.conf configlet"
-	cp -a /etc/raddb/radiusd.conf /usr/clearos/apps/radius/deploy/radius.conf.$TIMESTAMP
+	cp -a /etc/raddb/radiusd.conf /var/clearos/radius/backup/radius.conf.$TIMESTAMP
 	sed -i -e 's/^[[:space:]]*\$INCLUDE[[:space:]]*clients.conf/$INCLUDE clearos-clients.conf/' /etc/raddb/radiusd.conf
 fi
 
 CHECK=`grep "^[[:space:]]*.INCLUDE[[:space:]]*clearos-users" /etc/raddb/users 2>/dev/null`
 if [ -z "$CHECK" ]; then
 	logger -p local6.notice -t installer "app-radius-core - adding clearos-users configlet"
-	cp -a /etc/raddb/users /usr/clearos/apps/radius/deploy/users.$TIMESTAMP
+	cp -a /etc/raddb/users /var/clearos/radius/backup/users.$TIMESTAMP
 	echo "\$INCLUDE clearos-users" > /etc/raddb/users
 fi
 
@@ -42,6 +42,15 @@ fi
 if [ ! -h /etc/raddb/sites-enabled/clearos-inner-tunnel ]; then
 	logger -p local6.notice -t installer "app-radius-core - enabling clearos-inner-tunnel"
     ln -s /etc/raddb/sites-available/clearos-inner-tunnel /etc/raddb/sites-enabled/clearos-inner-tunnel
+fi
+
+# Enable LDAP
+#------------
+
+if [ -e /etc/raddb/sites-available/default ]; then
+	logger -p local6.notice -t installer "app-radius-core - enabling LDAP in default configuration"
+	cp -a /etc/raddb/sites-available/default /var/clearos/radius/backup/default.$TIMESTAMP
+    cp /usr/clearos/apps/radius/deploy/default /etc/raddb/sites-available/default
 fi
 
 # Create default certificates (from bootstrap in /etc/raddb/certs/)
@@ -66,3 +75,13 @@ openssl rsa -passin pass:`grep output_password $SSL_CONF | sed 's/.*=//;s/^ *//'
 chown root.radiusd *.pem
 chmod 640 *.pem
 rm server.* serial* key-encrypted.pem index.* ca.key -f
+
+# Set default start/boot
+#-----------------------
+
+logger -p local6.notice -t installer "app-radius-core - enabling RADIUS server"
+chkconfig radiusd on
+
+logger -p local6.notice -t installer "app-radius-core - starting RADIUS server"
+service radiusd start
+

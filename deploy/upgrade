@@ -1,5 +1,7 @@
 #!/bin/sh
 
+TIMESTAMP=`date "+%b-%d-%Y-%T"`
+
 # Update LDAP attributes mapping
 #-------------------------------
 
@@ -13,6 +15,16 @@ CHECK=`grep "^checkItem.*Password-With-Header.*clearSHAPassword" /etc/raddb/ldap
 if [ -z "$CHECK" ]; then
     logger -p local6.notice -t installer "app-radius-core - adding SHA password LDAP mapping"
     echo "checkItem       Password-With-Header            clearSHAPassword" >> /etc/raddb/ldap.attrmap
+fi
+
+# Beta upgrade - remove in ClearOS 7
+#-----------------------------------
+
+CHECK=`grep "^[[:space:]]*ldap" /etc/raddb/sites-enabled/default 2>/dev/null`
+if [ -z "$CHECK" ]; then
+    logger -p local6.notice -t installer "app-radius-core - upgrading LDAP in default configuration"
+    cp -a /etc/raddb/sites-available/default /var/clearos/radius/backup/default.$TIMESTAMP
+    cp /usr/clearos/apps/radius/deploy/default /etc/raddb/sites-available/default
 fi
 
 # LDAP synchronize trigger

@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 $app['basename'] = 'radius';
-$app['version'] = '1.2.3';
+$app['version'] = '1.2.4';
 $app['release'] = '1';
 $app['vendor'] = 'ClearFoundation';
 $app['packager'] = 'ClearFoundation';
@@ -50,6 +50,8 @@ $app['core_requires'] = array(
 
 $app['core_directory_manifest'] = array( 
     '/etc/raddb/clearos-certs' => array(),
+    '/var/clearos/radius' => array(),
+    '/var/clearos/radius/backup' => array(),
 );
 
 $app['core_file_manifest'] = array( 
