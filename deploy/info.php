@@ -53,28 +53,25 @@ $app['core_directory_manifest'] = array(
 );
 
 $app['core_file_manifest'] = array( 
-   'clearos-clients.conf' => array(
+    'clearos-clients.conf' => array(
         'target' => '/etc/raddb/clearos-clients.conf',
         'mode' => '0640',
         'owner' => 'root',
         'group' => 'radiusd',
     ),
-
-   'clearos-eap.conf' => array(
+    'clearos-eap.conf' => array(
         'target' => '/etc/raddb/clearos-eap.conf',
         'mode' => '0640',
         'owner' => 'root',
         'group' => 'radiusd',
     ),
-
-   'clearos-users' => array(
+    'clearos-users' => array(
         'target' => '/etc/raddb/clearos-users',
         'mode' => '0640',
         'owner' => 'root',
         'group' => 'radiusd',
     ),
-
-   'clearos-inner-tunnel' => array(
+    'clearos-inner-tunnel' => array(
         'target' => '/etc/raddb/sites-available/clearos-inner-tunnel',
         'mode' => '0640',
         'owner' => 'root',
