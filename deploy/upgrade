@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# Update LDAP attributes mapping
+#-------------------------------
+
+CHECK=`grep "^checkItem.*NT-Password.*clearMicrosoftNTPassword" /etc/raddb/ldap.attrmap`
+if [ -z "$CHECK" ]; then
+    logger -p local6.notice -t installer "app-radius-core - adding NT password LDAP mapping"
+    echo "checkItem       NT-Password                     clearMicrosoftNTPassword" >> /etc/raddb/ldap.attrmap
+fi
+
+CHECK=`grep "^checkItem.*Password-With-Header.*clearSHAPassword" /etc/raddb/ldap.attrmap`
+if [ -z "$CHECK" ]; then
+    logger -p local6.notice -t installer "app-radius-core - adding SHA password LDAP mapping"
+    echo "checkItem       Password-With-Header            clearSHAPassword" >> /etc/raddb/ldap.attrmap
+fi
+
+# LDAP synchronize trigger
+#-------------------------
+
+[ -x /usr/sbin/ldap-synchronize ] && /usr/sbin/ldap-synchronize
+
+/sbin/service radiusd condrestart >/dev/null 2>&1

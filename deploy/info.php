@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 $app['basename'] = 'radius';
-$app['version'] = '1.2.2';
+$app['version'] = '1.2.3';
 $app['release'] = '1';
 $app['vendor'] = 'ClearFoundation';
 $app['packager'] = 'ClearFoundation';
@@ -53,11 +53,14 @@ $app['core_directory_manifest'] = array(
 );
 
 $app['core_file_manifest'] = array( 
+    'freeradius.conf' => array( 'target' => '/var/clearos/ldap/synchronize/freeradius.conf' ),
     'clearos-clients.conf' => array(
         'target' => '/etc/raddb/clearos-clients.conf',
         'mode' => '0640',
         'owner' => 'root',
         'group' => 'radiusd',
+        'config' => TRUE,
+        'config_params' => 'noreplace',
     ),
     'clearos-eap.conf' => array(
         'target' => '/etc/raddb/clearos-eap.conf',

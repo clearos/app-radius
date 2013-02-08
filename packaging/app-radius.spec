@@ -1,7 +1,7 @@
 
 Name: app-radius
 Epoch: 1
-Version: 1.2.2
+Version: 1.2.3
 Release: 1%{dist}
 Summary: RADIUS Server
 License: GPLv3
@@ -48,6 +48,7 @@ install -D -m 0640 packaging/clearos-clients.conf %{buildroot}/etc/raddb/clearos
 install -D -m 0640 packaging/clearos-eap.conf %{buildroot}/etc/raddb/clearos-eap.conf
 install -D -m 0640 packaging/clearos-inner-tunnel %{buildroot}/etc/raddb/sites-available/clearos-inner-tunnel
 install -D -m 0640 packaging/clearos-users %{buildroot}/etc/raddb/clearos-users
+install -D -m 0644 packaging/freeradius.conf %{buildroot}/var/clearos/ldap/synchronize/freeradius.conf
 install -D -m 0644 packaging/radiusd.php %{buildroot}/var/clearos/base/daemon/radiusd.php
 
 %post
@@ -92,8 +93,9 @@ exit 0
 /usr/clearos/apps/radius/deploy
 /usr/clearos/apps/radius/language
 /usr/clearos/apps/radius/libraries
-%attr(0640,root,radiusd) /etc/raddb/clearos-clients.conf
+%attr(0640,root,radiusd) %config(noreplace) /etc/raddb/clearos-clients.conf
 %attr(0640,root,radiusd) /etc/raddb/clearos-eap.conf
 %attr(0640,root,radiusd) /etc/raddb/sites-available/clearos-inner-tunnel
 %attr(0640,root,radiusd) /etc/raddb/clearos-users
+/var/clearos/ldap/synchronize/freeradius.conf
 /var/clearos/base/daemon/radiusd.php
