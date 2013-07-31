@@ -26,6 +26,7 @@ Requires: app-base-core
 Requires: app-network-core
 Requires: app-openldap-directory-core
 Requires: app-samba-extension-core
+Requires: csplugin-filewatch
 Requires: freeradius
 Requires: freeradius-ldap
 Requires: freeradius-utils
@@ -50,6 +51,7 @@ install -D -m 0640 packaging/clearos-clients.conf %{buildroot}/etc/raddb/clearos
 install -D -m 0640 packaging/clearos-eap.conf %{buildroot}/etc/raddb/clearos-eap.conf
 install -D -m 0640 packaging/clearos-inner-tunnel %{buildroot}/etc/raddb/sites-available/clearos-inner-tunnel
 install -D -m 0640 packaging/clearos-users %{buildroot}/etc/raddb/clearos-users
+install -D -m 0644 packaging/filewatch-radius-upgrade.conf %{buildroot}/etc/clearsync.d/filewatch-radius-upgrade.conf
 install -D -m 0644 packaging/freeradius.conf %{buildroot}/var/clearos/ldap/synchronize/freeradius.conf
 install -D -m 0644 packaging/radiusd.php %{buildroot}/var/clearos/base/daemon/radiusd.php
 
@@ -101,5 +103,6 @@ exit 0
 %attr(0640,root,radiusd) /etc/raddb/clearos-eap.conf
 %attr(0640,root,radiusd) /etc/raddb/sites-available/clearos-inner-tunnel
 %attr(0640,root,radiusd) /etc/raddb/clearos-users
+/etc/clearsync.d/filewatch-radius-upgrade.conf
 /var/clearos/ldap/synchronize/freeradius.conf
 /var/clearos/base/daemon/radiusd.php

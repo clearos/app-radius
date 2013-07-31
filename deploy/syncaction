@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# Workaround for rpmsave and rpmnew configuration files - see tracker #1139
+RPM_LEFTOVERS=`ls /etc/raddb/modules/*.rpmsave /etc/raddb/modules/*.rpmnew 2>/dev/null`
+if [ -n "$RPM_LEFTOVERS" ]; then
+    TIMESTAMP=`date "+%b-%d-%Y-%T"`
+
+    for RPM in $RPM_LEFTOVERS; do
+        BASENAME=`echo $RPM | sed 's/.*modules\///'`
+        logger -p local6.notice -t clearsync "radius - upgrade detected, performing cleanup: $BASENAME"
+        mv $RPM /var/clearos/radius/backup/$BASENAME.$TIMESTAMP
+    done
+
+    service radiusd condrestart >/dev/null 2>&1
+fi

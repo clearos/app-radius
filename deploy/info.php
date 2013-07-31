@@ -43,6 +43,7 @@ $app['core_requires'] = array(
     'app-network-core',
     'app-openldap-directory-core',
     'app-samba-extension-core',
+    'csplugin-filewatch',
     'freeradius',
     'freeradius-ldap',
     'freeradius-utils',
@@ -56,6 +57,7 @@ $app['core_directory_manifest'] = array(
 
 $app['core_file_manifest'] = array( 
     'freeradius.conf' => array( 'target' => '/var/clearos/ldap/synchronize/freeradius.conf' ),
+    'filewatch-radius-upgrade.conf' => array( 'target' => '/etc/clearsync.d/filewatch-radius-upgrade.conf' ),
     'clearos-clients.conf' => array(
         'target' => '/etc/raddb/clearos-clients.conf',
         'mode' => '0640',
