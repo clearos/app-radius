@@ -17,6 +17,15 @@ if [ -z "$CHECK" ]; then
     echo "checkItem       Password-With-Header            clearSHAPassword" >> /etc/raddb/ldap.attrmap
 fi
 
+# Grant clearsync group privileges to deal with lingering rpmsave files (tracker #1139)
+#--------------------------------------------------------------------------------------
+
+if ! /usr/bin/id -Gn clearsync | grep -q "radiusd"; then
+    logger -p local6.notice -t installer "app-radius-core - add clearsync privileges"
+    /usr/sbin/usermod -G $(id -Gn radiusd | tr ' ' ','),radiusd clearsync
+    /sbin/service clearsyncd condrestart >/dev/null 2>&1
+fi
+
 # Beta upgrade - remove in ClearOS 7
 #-----------------------------------
 
