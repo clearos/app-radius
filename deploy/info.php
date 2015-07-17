@@ -86,3 +86,10 @@ $app['core_file_manifest'] = array(
     ),
     'radiusd.php'=> array('target' => '/var/clearos/base/daemon/radiusd.php'),
 );
+
+$app['delete_dependency'] = array(
+    'app-radius-core',
+    'freeradius',
+    'freeradius-ldap',
+    'freeradius-utils',
+);
