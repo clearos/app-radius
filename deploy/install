@@ -29,11 +29,11 @@ if [ -n "$CHECK" ]; then
 	sed -i -e 's/^[[:space:]]*\$INCLUDE[[:space:]]*clients.conf/$INCLUDE clearos-clients.conf/' /etc/raddb/radiusd.conf
 fi
 
-CHECK=`grep "^[[:space:]]*.INCLUDE[[:space:]]*clearos-users" /etc/raddb/users 2>/dev/null`
+CHECK=`grep "^[[:space:]]*.INCLUDE[[:space:]]*/etc/raddb/clearos-users" /etc/raddb/users 2>/dev/null`
 if [ -z "$CHECK" ]; then
 	logger -p local6.notice -t installer "app-radius-core - adding clearos-users configlet"
 	cp -a /etc/raddb/users /var/clearos/radius/backup/users.$TIMESTAMP
-	echo "\$INCLUDE clearos-users" > /etc/raddb/users
+	echo "\$INCLUDE /etc/raddb/clearos-users" > /etc/raddb/users
 fi
 
 # Create inner tunnel link

@@ -5,17 +5,17 @@ TIMESTAMP=`date "+%b-%d-%Y-%T"`
 # Update LDAP attributes mapping
 #-------------------------------
 
-CHECK=`grep "^checkItem.*NT-Password.*clearMicrosoftNTPassword" /etc/raddb/ldap.attrmap`
-if [ -z "$CHECK" ]; then
-    logger -p local6.notice -t installer "app-radius-core - adding NT password LDAP mapping"
-    echo "checkItem       NT-Password                     clearMicrosoftNTPassword" >> /etc/raddb/ldap.attrmap
-fi
-
-CHECK=`grep "^checkItem.*Password-With-Header.*clearSHAPassword" /etc/raddb/ldap.attrmap`
-if [ -z "$CHECK" ]; then
-    logger -p local6.notice -t installer "app-radius-core - adding SHA password LDAP mapping"
-    echo "checkItem       Password-With-Header            clearSHAPassword" >> /etc/raddb/ldap.attrmap
-fi
+#CHECK=`grep "^checkItem.*NT-Password.*clearMicrosoftNTPassword" /etc/raddb/ldap.attrmap`
+#if [ -z "$CHECK" ]; then
+#    logger -p local6.notice -t installer "app-radius-core - adding NT password LDAP mapping"
+#    echo "checkItem       NT-Password                     clearMicrosoftNTPassword" >> /etc/raddb/ldap.attrmap
+#fi
+#
+#CHECK=`grep "^checkItem.*Password-With-Header.*clearSHAPassword" /etc/raddb/ldap.attrmap`
+#if [ -z "$CHECK" ]; then
+#    logger -p local6.notice -t installer "app-radius-core - adding SHA password LDAP mapping"
+#    echo "checkItem       Password-With-Header            clearSHAPassword" >> /etc/raddb/ldap.attrmap
+#fi
 
 # Grant clearsync group privileges to deal with lingering rpmsave files (tracker #1139)
 #--------------------------------------------------------------------------------------
@@ -26,14 +26,22 @@ if ! /usr/bin/id -Gn clearsync | grep -q "radiusd"; then
     /sbin/service clearsyncd condrestart >/dev/null 2>&1
 fi
 
-# Beta upgrade - remove in ClearOS 7
-#-----------------------------------
+# Set default configuration
+#--------------------------
 
 CHECK=`grep "^[[:space:]]*ldap" /etc/raddb/sites-enabled/default 2>/dev/null`
 if [ -z "$CHECK" ]; then
     logger -p local6.notice -t installer "app-radius-core - upgrading LDAP in default configuration"
     cp -a /etc/raddb/sites-available/default /var/clearos/radius/backup/default.$TIMESTAMP
     cp /usr/clearos/apps/radius/deploy/default /etc/raddb/sites-available/default
+fi
+
+# Add LDAP module
+#----------------
+
+if [ ! -e /etc/raddb/mods-enabled/ldap ]; then
+    logger -p local6.notice -t installer "app-radius-core - adding LDAP hook"
+    ln -s /etc/raddb/mods-available/ldap /etc/raddb/mods-enabled/ldap
 fi
 
 # LDAP synchronize trigger

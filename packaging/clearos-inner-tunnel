@@ -4,23 +4,37 @@
 #	This is a virtual server that handles *only* inner tunnel
 #	requests for EAP-TTLS and PEAP types.
 #
-#	$Id$
+#	$Id: 1b937282988730ae181e345588f9c2678b197dbc $
 #
 ######################################################################
 
 server clearos-inner-tunnel {
 
 #
-#  Un-comment the next section to perform test on the inner tunnel
-#  without needing an outer tunnel session.  The tests will not be
-#  exactly the same as when TTLS or PEAP are used, but they will
-#  be close enough for many tests.
+#  This next section is here to allow testing of the "inner-tunnel"
+#  authentication methods, independently from the "default" server.
+#  It is listening on "localhost", so that it can only be used from
+#  the same machine.
 #
-#listen {
-#       ipaddr = 127.0.0.1
-#       port = 18120
+#	$ radtest USER PASSWORD 127.0.0.1:18120 0 testing123
+#
+#  If it works, you have configured the inner tunnel correctly.  To check
+#  if PEAP will work, use:
+#
+#	$ radtest -t mschap USER PASSWORD 127.0.0.1:18120 0 testing123
+#
+#  If that works, PEAP should work.  If that command doesn't work, then
+#
+#	FIX THE INNER TUNNEL CONFIGURATION SO THAT IT WORKS.
+#
+#  Do NOT do any PEAP tests.  It won't help.  Instead, concentrate
+#  on fixing the inner tunnel configuration.  DO NOTHING ELSE.
+#
+# listen {
+#        ipaddr = 127.0.0.1
+#        port = 18120
 #       type = auth
-#}
+# }
 
 
 #  Authorization. First preprocess (hints and huntgroups files),
@@ -29,7 +43,7 @@ server clearos-inner-tunnel {
 #  The order of the realm modules will determine the order that
 #  we try to find a matching realm.
 #
-#  Make *sure* that 'preprocess' comes before any realm if you 
+#  Make *sure* that 'preprocess' comes before any realm if you
 #  need to setup hints for the remote radius server
 authorize {
 	#
@@ -124,17 +138,12 @@ authorize {
 #	etc_smbpasswd
 
 	#
-	#  The ldap module will set Auth-Type to LDAP if it has not
-	#  already been set
+	#  The ldap module reads passwords from the LDAP database.
 	ldap
 
 	#
 	#  Enforce daily limits on time spent logged in.
 #	daily
-
-	#
-	# Use the checkval module
-#	checkval
 
 	expiration
 	logintime
@@ -161,7 +170,7 @@ authorize {
 #  Note that it does NOT mean 'try each module in order'.  It means
 #  that a module from the 'authorize' section adds a configuration
 #  attribute 'Auth-Type := FOO'.  That authentication type is then
-#  used to pick the apropriate module from the list below.
+#  used to pick the appropriate module from the list below.
 #
 
 #  In general, you SHOULD NOT set the Auth-Type attribute.  The server
@@ -201,19 +210,17 @@ authenticate {
 	#  Pluggable Authentication Modules.
 #	pam
 
-	#
-	#  See 'man getpwent' for information on how the 'unix'
-	#  module checks the users password.  Note that packets
-	#  containing CHAP-Password attributes CANNOT be authenticated
-	#  against /etc/passwd!  See the FAQ for details.
-	#  
-	unix
-
 	# Uncomment it if you want to use ldap for authentication
 	#
 	# Note that this means "check plain-text password against
 	# the ldap database", which means that EAP won't work,
 	# as it does not supply a plain-text password.
+	#
+	#  We do NOT recommend using this.  LDAP servers are databases.
+	#  They are NOT authentication servers.  FreeRADIUS is an
+	#  authentication server, and knows what to do with authentication.
+	#  LDAP servers do not.
+	#
 #	Auth-Type LDAP {
 #		ldap
 #	}
@@ -231,7 +238,7 @@ authenticate {
 ######################################################################
 
 
-#  Session database, used for checking Simultaneous-Use. Either the radutmp 
+#  Session database, used for checking Simultaneous-Use. Either the radutmp
 #  or rlm_sql module can handle this.
 #  The rlm_sql module is *much* faster
 session {
@@ -246,15 +253,26 @@ session {
 #  Post-Authentication
 #  Once we KNOW that the user has been authenticated, there are
 #  additional steps we can take.
+#
+#  Note that the last packet of the inner-tunnel authentication
+#  MAY NOT BE the last packet of the outer session.  So updating
+#  the outer reply MIGHT work, and sometimes MIGHT NOT.  The
+#  exact functionality depends on both the inner and outer
+#  authentication methods.
+#
+#  If you need to send a reply attribute in the outer session,
+#  the ONLY safe way is to set "use_tunneled_reply = yes", and
+#  then update the inner-tunnel reply.
 post-auth {
-	# Note that we do NOT assign IP addresses here.
-	# If you try to assign IP addresses for EAP authentication types,
-	# it WILL NOT WORK.  You MUST use DHCP.
+	#  If you want privacy to remain, see the
+	#  Chargeable-User-Identity attribute from RFC 4372.
+	#  If you want to use it just uncomment the line below.
+#       cui-inner
 
 	#
 	#  If you want to have a log of authentication replies,
-	#  un-comment the following line, and the 'detail reply_log'
-	#  section, above.
+	#  un-comment the following line, and enable the
+	#  'detail reply_log' module.
 #	reply_log
 
 	#
@@ -280,46 +298,14 @@ post-auth {
 	#  Access-Reject packets are sent through the REJECT sub-section of the
 	#  post-auth section.
 	#
-	#  Add the ldap module name (or instance) if you have set 
+	#  Add the ldap module name (or instance) if you have set
 	#  'edir_account_policy_check = yes' in the ldap module configuration
 	#
 	Post-Auth-Type REJECT {
+		# log failed authentications in SQL, too.
+#		-sql
 		attr_filter.access_reject
 	}
-
-	#
-	#  The example policy below updates the outer tunnel reply
-	#  (usually Access-Accept) with the User-Name from the inner
-	#  tunnel User-Name.  Since this section is processed in the
-	#  context of the inner tunnel, "request" here means "inner
-	#  tunnel request", and "outer.reply" means "outer tunnel
-	#  reply attributes".
-	#
-	#  This example is most useful when the outer session contains
-	#  a User-Name of "anonymous@....", or a MAC address.  If it
-	#  is enabled, the NAS SHOULD use the inner tunnel User-Name
-	#  in subsequent accounting packets.  This makes it easier to
-	#  track user sessions, as they will all be based on the real
-	#  name, and not on "anonymous".
-	#
-	#  The problem with doing this is that it ALSO exposes the
-	#  real user name to any intermediate proxies.  People use
-	#  "anonymous" identifiers outside of the tunnel for a very
-	#  good reason: it gives them more privacy.  Setting the reply
-	#  to contain the real user name removes ALL privacy from
-	#  their session.
-	#
-	#  If you want privacy to remain, see the
-	#  Chargeable-User-Identity attribute from RFC 4372.  In order
-	#  to use that attribute, you will have to allocate a
-	#  per-session identifier for the user, and store it in a
-	#  long-term database (e.g. SQL).  You should also use that
-	#  attribute INSTEAD of the configuration below.
-	#
-	#update outer.reply {
-	#	User-Name = "%{request:User-Name}"
-	#}
-
 }
 
 #
@@ -331,8 +317,6 @@ post-auth {
 #  Only a few modules currently have this method.
 #
 pre-proxy {
-#	attr_rewrite
-
 	#  Uncomment the following line if you want to change attributes
 	#  as defined in the preproxy_users file.
 #	files
@@ -359,8 +343,6 @@ post-proxy {
 	#  un-comment the following line, and the 'detail post_proxy_log'
 	#  section, above.
 #	post_proxy_log
-
-#	attr_rewrite
 
 	#  Uncomment the following line if you want to filter replies from
 	#  remote proxies based on the rules defined in the 'attrs' file.

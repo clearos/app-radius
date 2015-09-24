@@ -1,9 +1,22 @@
 #!/bin/sh
 
-# Delete inner tunnel link
-#-------------------------
-
 if [ -h /etc/raddb/sites-enabled/clearos-inner-tunnel ]; then
     logger -p local6.notice -t installer "app-radius-core - removing clearos-inner-tunnel"
     rm -f /etc/raddb/sites-enabled/clearos-inner-tunnel
+fi
+
+if [ -h /etc/raddb/mods-enabled/ldap ]; then
+    logger -p local6.notice -t installer "app-radius-core - removing LDAP hook"
+    rm -f /etc/raddb/mods-enabled/ldap
+fi
+
+if [ -d /etc/raddb/clearos-certs ]; then 
+    logger -p local6.notice -t installer "app-radius-core - removing ClearOS certs"
+    rm -rf /etc/raddb/clearos-certs
+fi
+
+# Clean up certas from freeradius RPM too
+if [ -d /etc/raddb/certs ]; then 
+    logger -p local6.notice -t installer "app-radius-core - removing RADIUS certs"
+    rm -rf /etc/raddb/certs
 fi
