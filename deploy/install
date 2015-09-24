@@ -79,9 +79,10 @@ rm server.* serial* key-encrypted.pem index.* ca.key -f
 # Set default start/boot
 #-----------------------
 
-logger -p local6.notice -t installer "app-radius-core - enabling RADIUS server"
-chkconfig radiusd on
+if [ -e /var/clearos/openldap/config.php ]; then
+    logger -p local6.notice -t installer "app-radius-core - enabling RADIUS server"
+    chkconfig radiusd on >/dev/null 2>&1
 
-logger -p local6.notice -t installer "app-radius-core - starting RADIUS server"
-service radiusd start
-
+    logger -p local6.notice -t installer "app-radius-core - starting RADIUS server"
+    service radiusd start >/dev/null 2>&1
+fi
