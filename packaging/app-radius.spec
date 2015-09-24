@@ -1,7 +1,7 @@
 
 Name: app-radius
 Epoch: 1
-Version: 2.1.20
+Version: 2.1.21
 Release: 1%{dist}
 Summary: RADIUS Server
 License: GPLv3
