@@ -36,6 +36,18 @@ if [ -z "$CHECK" ]; then
 	echo "\$INCLUDE /etc/raddb/clearos-users" > /etc/raddb/users
 fi
 
+# Update mschap configlet
+#------------------------
+
+CHECK=`grep "^[[:space:]]*ntlm_auth[[:space:]]*=[[:space:]]*./usr/bin/ntlm_auth" /etc/raddb/mods-available/mschap 2>/dev/null`
+if [ -z "$CHECK" ]; then
+    logger -p local6.notice -t installer "app-radius-core - upgrading MSCHAP configuration"
+    cp -a /etc/raddb/mods-available/mschap /var/clearos/radius/backup/mschap.$TIMESTAMP
+    cp /usr/clearos/apps/radius/deploy/mshap /etc/raddb/mods-available/mschap
+    chown root.radiusd /etc/raddb/mods-available/mschap
+    chomd 640 /etc/raddb/mods-available/mschap
+fi
+
 # Create inner tunnel link
 #-------------------------
 
