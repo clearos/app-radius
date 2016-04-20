@@ -44,6 +44,11 @@ if [ ! -e /etc/raddb/mods-enabled/ldap ]; then
     ln -s /etc/raddb/mods-available/ldap /etc/raddb/mods-enabled/ldap
 fi
 
+# Add wbpriv
+#-----------
+
+/usr/sbin/usermod -a -G wbpriv radiusd
+
 # LDAP synchronize trigger
 #-------------------------
 
