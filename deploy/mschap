@@ -55,7 +55,7 @@ mschap {
 	# attribute, and do prefix/suffix checks in order to obtain
 	# the "best" user name for the request.
 	#
-    ntlm_auth = "/usr/bin/ntlm_auth --request-nt-key --username=%{%{Stripped-User-Name}:-%{%{User-Name}:-None}} --challenge=%{%{mschap:Challenge}:-00} --nt-response=%{%{mschap:NT-Response}:-00}"
+	ntlm_auth = "/usr/bin/ntlm_auth --request-nt-key --username=%{%{Stripped-User-Name}:-%{%{User-Name}:-None}} --challenge=%{%{mschap:Challenge}:-00} --nt-response=%{%{mschap:NT-Response}:-00}"
 
 	# The default is to wait 10 seconds for ntlm_auth to
 	# complete.  This is a long time, and if it's taking that
