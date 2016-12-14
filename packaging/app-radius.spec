@@ -1,8 +1,8 @@
 
 Name: app-radius
 Epoch: 1
-Version: 2.2.0
-Release: 2%{dist}
+Version: 2.3.0
+Release: 1%{dist}
 Summary: RADIUS Server
 License: GPLv3
 Group: ClearOS/Apps
