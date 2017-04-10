@@ -1,7 +1,7 @@
 
 Name: app-radius
 Epoch: 1
-Version: 2.3.0
+Version: 2.3.1
 Release: 1%{dist}
 Summary: RADIUS Server
 License: GPLv3
@@ -91,6 +91,7 @@ exit 0
 %files core
 %defattr(-,root,root)
 %exclude /usr/clearos/apps/radius/packaging
+%exclude /usr/clearos/apps/radius/unify.json
 %dir /usr/clearos/apps/radius
 %dir /etc/raddb/clearos-certs
 %dir /var/clearos/radius
