@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 $app['basename'] = 'radius';
-$app['version'] = '2.3.1';
+$app['version'] = '2.4.0';
 $app['release'] = '1';
 $app['vendor'] = 'ClearFoundation';
 $app['packager'] = 'ClearFoundation';
@@ -44,7 +44,7 @@ $app['core_requires'] = array(
     'app-openldap-directory-core',
     'app-samba-extension-core',
     'csplugin-filewatch',
-    'freeradius',
+    'freeradius >= 3.0.13',
     'freeradius-ldap',
     'freeradius-utils',
 );

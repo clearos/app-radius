@@ -1,7 +1,7 @@
 
 Name: app-radius
 Epoch: 1
-Version: 2.3.1
+Version: 2.4.0
 Release: 1%{dist}
 Summary: RADIUS Server
 License: GPLv3
@@ -27,7 +27,7 @@ Requires: app-network-core
 Requires: app-openldap-directory-core
 Requires: app-samba-extension-core
 Requires: csplugin-filewatch
-Requires: freeradius
+Requires: freeradius >= 3.0.13
 Requires: freeradius-ldap
 Requires: freeradius-utils
 

@@ -36,6 +36,16 @@ if [ -z "$CHECK" ]; then
     cp /usr/clearos/apps/radius/deploy/default /etc/raddb/sites-available/default
 fi
 
+# Required 3.0.4 to 3.0.13 upgrade
+#---------------------------------
+
+CHECK=`md5sum /etc/raddb/sites-available/default | awk '{ print $1 }'`
+if [ "$CHECK" == "6fc43e38e8baa588a47256ba72f0a946" ]; then
+    logger -p local6.notice -t installer "app-radius-core - upgrading old default config"
+    cp -a /etc/raddb/sites-available/default /var/clearos/radius/backup/default.$TIMESTAMP
+    cp /usr/clearos/apps/radius/deploy/default /etc/raddb/sites-available/default
+fi
+
 # Add LDAP module
 #----------------
 
